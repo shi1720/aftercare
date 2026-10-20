@@ -12,11 +12,13 @@ Path A, **Supervised**. The actual AI repair was reviewed, rebased, tested and m
 
 ## Video and submission
 
-The finished `Aftercare-demo-final.mp4` is 129.74 seconds at 1080p with a standard Google Cloud synthetic voice and burned-in English captions. No new narration recording is required. The editable scene assets, verbatim script, narration audio and SRT are supplied separately. The recording shows actual hosted runs and actual GitLab evidence. It contains no music, fictional customers or payment-provider activity.
+[Watch the public YouTube demo](https://www.youtube.com/watch?v=ZqhwnJsPLQs). The video is 129.74 seconds at 1080p with a standard Google Cloud synthetic voice, burned-in English captions and a separate uploaded English caption track. YouTube copyright and Community Guidelines checks found no issues. Public playback was checked at 1920x1080 and anonymous oEmbed metadata was available.
 
-The existing [Devpost entry](https://devpost.com/submit-to/31503-life-after-code/manage/submissions/1247898-aftercare/project-overview) has the project name and tagline saved. The story, technology list, application/source links, testing instructions, stage selections and captioned gallery are saved. The final video URL and personal eligibility fields remain incomplete. No final prize entry has been submitted. The owner must perform the final submission action.
+The complete mastered voiceover received an automated listening review for pronunciation, accent consistency and pacing. It was identified as neutral US English with no flagged pronunciation issues or awkward pauses. A brief audio peak was corrected; the final AAC master measures -17.83 LUFS and -1.15 dBTP. The picture, timing and captions were preserved. There is no music, fictional customer claim or payment-provider activity.
 
-YouTube public upload is prepared on the existing Shivam Gupta channel. Its upload dialog includes a terms acknowledgment, so publication awaits the action-time confirmation requested in chat. Country of residence and the three required personal eligibility statements also await the owner's factual response. Do not infer them from the account name or timezone.
+The [Devpost entry](https://devpost.com/submit-to/31503-life-after-code/manage/submissions/1247898-aftercare/finalization) shows **4/5 steps complete**. The project name, tagline, story, technology list, application/source links, public video URL, testing instructions, nine stages, branded cover and captioned gallery are saved. The owner supplied India as country of residence and confirmed the three eligibility statements; those fields are saved.
+
+**The owner must complete the final step:** open the finalization page, review and accept its Official Rules and Terms of Service, then click **Submit project**. This final prize-entry action is reserved for the owner by the browser-control policy. No final entry has been submitted by the agent.
 
 The supplied deadline is October 27, 2026, **13:00 UTC / 18:30 India time**. Check the event page before final submission. Keep the submitted source and materials unchanged from the deadline through the winners announcement. Continue later development in a separate fork.
 

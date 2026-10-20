@@ -15,8 +15,8 @@ Verified October 20, 2026. The reference sandbox and GitLab AI source-repair wor
 | Firebase end-to-end checks | [Measured results](firebase-smoke-results.json): both recovery cases, blocked unsafe candidate, login/logout, cookie round trip, ownership isolation, event chains, artifact digests, CSRF and missing-path behavior |
 | Browser checks | Registration, private empty account workspace, session persistence, search, filter clearing, mobile navigation, run reloads, JSON previews and downloaded evidence; responsive layout at 390, 768 and 1440 pixels with no document overflow |
 | API explorer | /api/docs loads its own assets and the live schema under self-only script CSP; a real hosted health request returned HTTP 200 |
-| Product demo | Final 129.74-second voiced edit with English captions, genuine recovery/refusal recordings and real GitLab evidence. Public upload is tracked in the final submission handoff. |
-| Devpost draft | Existing entry 1247898, titled Aftercare. Fields are being completed at the existing draft; final prize-entry submission requires the owner. |
+| Product demo | [Public YouTube demo](https://www.youtube.com/watch?v=ZqhwnJsPLQs), 129.74 seconds, clear neutral US English narration, English captions, genuine recovery/refusal recordings and real GitLab evidence. YouTube checks found no issues. |
+| Devpost draft | Existing entry 1247898, titled Aftercare. Project fields, public video URL, country and confirmed eligibility are saved. The draft shows 4/5 steps complete; final prize-entry submission requires the owner. |
 
 ## Boundaries
 
