@@ -65,3 +65,29 @@ def test_renewed_lease_cannot_be_expired(monkeypatch):
 def test_firestore_default_database_rejected(tmp_path):
     with pytest.raises(ValueError, match="dedicated named"):
         FirestoreStore(tmp_path, "project", "(default)")
+
+
+def test_firestore_save_cannot_change_owner_or_completed_seal(monkeypatch):
+    import hashlib
+    from server.evidence import canonical
+    run = new_run("duplicate-charge")
+    fresh = {"user_id": "alice", "body": json.dumps(run), "updatedAt": time.time()}
+    store, transaction = transaction_store(monkeypatch, fresh)
+    with pytest.raises(ValueError, match="owner mismatch"):
+        store.save_run("bob", run)
+    assert transaction.writes == []
+    fresh["sealedSha256"] = hashlib.sha256(canonical(run)).hexdigest()
+    modified = copy.deepcopy(run)
+    modified["title"] = "tampered"
+    with pytest.raises(ValueError, match="immutable"):
+        store.save_run("alice", modified)
+    assert transaction.writes == []
+
+
+def test_firestore_health_has_a_short_non_retrying_deadline():
+    captured = []
+    reference = SimpleNamespace(get=lambda **kwargs: captured.append(kwargs))
+    store = object.__new__(FirestoreStore)
+    store.collection = lambda name: SimpleNamespace(document=lambda name: reference)
+    store.health()
+    assert captured == [{"timeout": 3, "retry": None}]

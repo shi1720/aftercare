@@ -29,18 +29,49 @@ class IncidentEvidenceTests(unittest.TestCase):
         self.assertFalse(incident.validate_chain(events[1:]))
         self.assertFalse(incident.validate_chain([]))
 
-    def test_checked_in_fixture_reproduces_and_verify_is_red(self):
-        # Repair-branch CI also runs this test; the monitor job enforces which
-        # revision is expected to reproduce versus pass its business contract.
+    def test_current_fixture_observation_agrees_with_contract(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory) / "fixture"
             shutil.copytree(incident.FIXTURE, target, ignore=shutil.ignore_patterns("__pycache__", "test_regression.py"))
-            # This test intentionally checks either valid repository state. The
-            # separate monitor job determines whether main/repair must be red/green.
+            # The monitor job separately requires repaired current source to pass.
             tests = incident.run_contract(target)
             observation = incident.observe(target)
             self.assertEqual(tests["exitCode"] == 0, observation["duplicateCaptures"] == 0)
             self.assertEqual(observation["health"]["status"], "healthy")
+
+    def test_seeded_baseline_fails_without_rewriting_current_source(self):
+        before = incident.digest(incident.FIXTURE / "service.py")
+        with incident.selected_fixture("seeded") as fixture:
+            self.assertNotEqual(fixture, incident.FIXTURE)
+            tests = incident.run_contract(fixture)
+            observation = incident.observe(fixture)
+            self.assertEqual(tests["exitCode"], 1)
+            self.assertGreaterEqual(tests["testsRun"], 5)
+            self.assertEqual(observation["duplicateCaptures"], 23)
+            self.assertEqual(incident.digest(fixture / "service.py"), incident.SEEDED_SOURCE_SHA256)
+            self.assertEqual((fixture / "test_contract.py").read_bytes(),
+                             (incident.FIXTURE / "test_contract.py").read_bytes())
+        self.assertFalse(fixture.exists())
+        self.assertEqual(incident.digest(incident.FIXTURE / "service.py"), before)
+
+    def test_tampered_seeded_baseline_is_rejected_before_execution(self):
+        with tempfile.TemporaryDirectory() as directory:
+            changed = Path(directory) / "changed.py"
+            changed.write_text("import os\n")
+            with patch.object(incident, "SEEDED_SOURCE", changed):
+                with self.assertRaises(ValueError):
+                    with incident.selected_fixture("seeded"):
+                        self.fail("Tampered baseline must not be yielded")
+
+    def test_cli_labels_seeded_evidence_and_verify_remains_red(self):
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(incident.main(["reproduce", "--fixture", "seeded", "--output", directory]), 0)
+            manifest = json.loads((Path(directory) / "manifest.json").read_text())
+            self.assertEqual(manifest["source"]["fixtureSelection"], "seeded")
+            self.assertTrue(manifest["defectReproduced"])
+            self.assertFalse(manifest["repairVerified"])
+            self.assertTrue(incident.check_evidence(directory))
+            self.assertEqual(incident.main(["verify", "--fixture", "seeded", "--output", directory]), 1)
 
     def test_real_repair_passes_contract_and_preserves_evidence_integrity(self):
         with tempfile.TemporaryDirectory() as directory:

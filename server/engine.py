@@ -130,8 +130,19 @@ class Controller:
         try:
             self._execute(user_id, run)
         except Exception as exc:
+            folder = self.store.root / "runs" / run["id"]
+            safe_retained = (folder / "safe.py").is_file()
+            if safe_retained:
+                atomic_json(folder / "active-revision.json", {"revision": digest(SAFE_SOURCE.encode()), "source": "safe.py"})
             run["status"] = "failed"
+            run["stage"] = "govern"
+            run["after"] = {"revision": digest(SAFE_SOURCE.encode())[:12], "healthStatus": "safe-revision-retained" if safe_retained else "unverified", "contractStatus": "unverified"}
             run["completedAt"] = now()
+            for stage in run["stages"]:
+                if stage["id"] == "govern":
+                    stage.update(status="failed", detail="Final persistence or startup failed; promotion revoked")
+                elif stage["status"] in {"running", "pending"}:
+                    stage.update(status="blocked", detail="Controller stopped before completion")
             run["decision"] = {"outcome": "stopped", "reason": "Controller storage or startup failure: " + type(exc).__name__}
             event = {"id": str(uuid.uuid4()), "at": run["completedAt"], "stage": "govern", "title": "Controller persistence failure", "detail": run["decision"]["reason"], "kind": "error", "previousHash": run["events"][-1]["hash"] if run["events"] else "0"*64}
             event["hash"] = event_hash(event)
@@ -339,9 +350,12 @@ class Controller:
             stage(run["stage"], "failed", run["decision"]["reason"])
             event("govern", "Fail-closed recovery stop", run["decision"]["reason"], "error")
         finally:
-            for artifact in run["artifacts"]:
+            pending_artifacts = run["artifacts"]
+            run["artifacts"] = []
+            for artifact in pending_artifacts:
                 artifact_path = folder / artifact["name"]
                 self.store.put_artifact(run["id"], artifact["name"], artifact_path.read_bytes())
+                run["artifacts"].append(artifact)
             run["completedAt"] = now()
             run["metrics"]["durationMs"] = round((time.monotonic()-started)*1000)
             atomic_json(folder / "run-evidence.json", self.envelope(run))

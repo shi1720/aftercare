@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aftercare · API explorer</title>
+  <link rel="stylesheet" href="/api/docs-assets/docs.css">
+  <script src="/api/docs-assets/docs.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/">aftercare<span>.</span></a><a href="/api/openapi.json">OpenAPI JSON ↗</a></header>
+  <main>
+    <p class="eyebrow">DEVELOPER REFERENCE</p>
+    <h1>One API. An accountable recovery loop.</h1>
+    <p class="intro">Explore the live API schema and send requests from this browser. Requests use your current session. Start an isolated guest sandbox with <code>POST /api/demo/session</code>, or sign in with your own account.</p>
+    <aside><strong>Real requests, synthetic payments.</strong> “Send request” calls the running API. Recovery scenarios use fixed first-party fixtures; account and session actions affect your current browser session. Request bodies stay in this page and are not saved by the explorer.</aside>
+    <div class="toolbar"><label for="filter">Find an endpoint</label><input id="filter" type="search" placeholder="Search paths or descriptions" autocomplete="off"><span id="version"></span></div>
+    <p id="message" role="status" aria-live="polite">Loading the live OpenAPI schema…</p>
+    <section id="operations" aria-label="API endpoints"></section>
+    <noscript><p>This explorer needs JavaScript. You can read the complete <a href="/api/openapi.json">OpenAPI JSON schema</a> without it.</p></noscript>
+  </main>
+  <footer>Aftercare · Built by Shivam Gupta · First-party explorer, served entirely from this origin.</footer>
+</body>
+</html>

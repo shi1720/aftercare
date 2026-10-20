@@ -11,6 +11,8 @@ import io
 import json
 import os
 import re
+import shlex
+from contextlib import contextmanager
 from pathlib import Path
 import subprocess
 import sys
@@ -21,6 +23,8 @@ from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "examples" / "checkout"
+SEEDED_SOURCE = FIXTURE / "baselines" / "duplicate-charge.py"
+SEEDED_SOURCE_SHA256 = "27800cda283f056ec3dbe3d74abbc20b3c051250775bfa29056da8992950ab0f"
 REPAIR_PATHS = {"examples/checkout/service.py", "examples/checkout/test_regression.py"}
 GENESIS = "0" * 64
 
@@ -37,6 +41,26 @@ def write_json(path, value):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
+
+
+@contextmanager
+def selected_fixture(choice):
+    """Select only trusted repository fixtures; seeded source never overwrites main."""
+    if choice == "current":
+        yield FIXTURE
+        return
+    if choice != "seeded":
+        raise ValueError("Unknown trusted fixture")
+    if SEEDED_SOURCE.is_symlink() or digest(SEEDED_SOURCE) != SEEDED_SOURCE_SHA256:
+        raise ValueError("Seeded incident baseline integrity check failed")
+    with tempfile.TemporaryDirectory(prefix="aftercare-seeded-") as directory:
+        fixture = Path(directory)
+        shutil.copy2(SEEDED_SOURCE, fixture / "service.py")
+        shutil.copy2(FIXTURE / "test_contract.py", fixture / "test_contract.py")
+        regression = FIXTURE / "test_regression.py"
+        if regression.is_file():
+            shutil.copy2(regression, fixture / "test_regression.py")
+        yield fixture
 
 
 def append_event(events, kind, payload):
@@ -64,10 +88,10 @@ def run_contract(fixture=FIXTURE):
     candidate_findings = fixture_safety(fixture)
     if candidate_findings:
         raise ValueError("Fixture rejected before execution: " + "; ".join(candidate_findings))
-    result = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(fixture),
-                             "-p", "test_*.py", "-v"], cwd=ROOT, capture_output=True, text=True, timeout=30)
+    command = [sys.executable, "-m", "unittest", "discover", "-s", str(fixture), "-p", "test_*.py", "-v"]
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=30)
     count = re.search(r"Ran (\d+) tests?", result.stderr)
-    return {"command": "python -m unittest discover -s examples/checkout -p 'test_*.py' -v",
+    return {"command": shlex.join(command),
             "exitCode": result.returncode, "testsRun": int(count.group(1)) if count else 0,
             "stdout": result.stdout, "stderr": result.stderr}
 
@@ -118,7 +142,7 @@ print(json.dumps({"health":checkout.health(),"requests":24,"uniqueOrders":1,
     return json.loads(result.stdout)
 
 
-def record(mode, output, fixture=FIXTURE):
+def record(mode, output, fixture=FIXTURE, selection="provided"):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     tests, observation = run_contract(fixture), observe(fixture)
@@ -126,7 +150,7 @@ def record(mode, output, fixture=FIXTURE):
                   and observation["duplicateCaptures"] > 0)
     verified = (tests["exitCode"] == 0 and observation["duplicateCaptures"] == 0
                 and (fixture / "test_regression.py").is_file() and tests["testsRun"] >= 6)
-    source = {"serviceSha256": digest(fixture / "service.py"),
+    source = {"fixtureSelection": selection, "serviceSha256": digest(fixture / "service.py"),
               "contractSha256": digest(fixture / "test_contract.py")}
     events = []
     append_event(events, "source-bound", source)
@@ -142,7 +166,7 @@ def record(mode, output, fixture=FIXTURE):
                 "chainHead": events[-1]["hash"],
                 "files": {name: digest(output / name) for name in ["tests.json", "observation.json", "events.json"]}}
     write_json(output / "manifest.json", manifest)
-    print(json.dumps({"output": str(output), "defectReproduced": reproduced,
+    print(json.dumps({"output": str(output), "fixtureSelection": selection, "defectReproduced": reproduced,
                       "repairVerified": verified, "chainHead": events[-1]["hash"]}))
     return 0 if (verified if mode == "verify" else reproduced) else 1
 
@@ -259,10 +283,16 @@ def main(argv=None):
     parser.add_argument("command", choices=["reproduce", "verify", "evidence", "validate", "policy", "secure", "package"])
     parser.add_argument("--output", default="artifacts/incident")
     parser.add_argument("--base")
+    parser.add_argument("--fixture", choices=["current", "seeded"],
+                        help="Trusted fixture selection; reproduce defaults to seeded, verify to current")
     args = parser.parse_args(argv)
+    if args.fixture and args.command not in {"reproduce", "verify"}:
+        parser.error("--fixture applies only to reproduce and verify")
     try:
         if args.command in {"reproduce", "verify"}:
-            return record(args.command, args.output)
+            selection = args.fixture or ("seeded" if args.command == "reproduce" else "current")
+            with selected_fixture(selection) as fixture:
+                return record(args.command, args.output, fixture, selection)
         if args.command == "evidence":
             return reference_evidence(args.output)
         if args.command == "validate":

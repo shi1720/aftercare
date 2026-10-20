@@ -1,3 +1,9 @@
+# Firebase Hosting deployment
+
+Primary public URL: https://aftercare-release.web.app. Run `GOOGLE_CLOUD_PROJECT=your-project bash deploy/firebase.sh` from this repository after the database/runtime identity setup below. The script builds the frontend, deploys Cloud Run, and publishes Firebase Hosting. The API stays on Cloud Run; Hosting proxies `/api/**` and health requests on the same domain. Session cookies use `__session`, and APP_ORIGINS explicitly allows both Firebase domains and the existing Cloud Run origin. API responses are private and not cached; HTML revalidates, and fingerprinted assets are immutable.
+
+`python3 deploy/firebase-hosting.py --project your-project --skip-build` publishes an already verified frontend build. It uses the official Firebase Hosting REST API through the signed-in gcloud identity; there is no saved service-account key or Firebase token.
+
 # Verified Google Cloud deployment
 
 **Public URL:** https://aftercare-359201230061.us-central1.run.app

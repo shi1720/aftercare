@@ -6,7 +6,7 @@ Aftercare closes the gap between a healthy deployment and a correct customer out
 
 Built by **Shivam Gupta** for GitLab Transcend 2026. **Path A · Supervised GitLab repair workflow.** The public reference sandbox runs its bounded loop hands-off. This distinction is visible in the product.
 
-- [Live Google Cloud app](https://aftercare-359201230061.us-central1.run.app)
+- [Live Google Cloud app](https://aftercare-release.web.app)
 - [Public GitLab project](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare)
 - [CI/CD history](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines)
 - [Executed Duo session](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions/9737653)
@@ -58,11 +58,11 @@ Open http://localhost:8080. The production server serves both the built UI and `
 python -m pytest tests -q
 python scripts/check_submission.py
 python scripts/incident.py evidence --output artifacts/reference
-python scripts/incident.py reproduce --output artifacts/seeded-fault
-python scripts/incident.py verify --output artifacts/repair
+python scripts/incident.py reproduce --fixture seeded --output artifacts/seeded-fault
+python scripts/incident.py verify --fixture current --output artifacts/repair
 ```
 
-The last command **must fail on the default branch** because `examples/checkout/service.py` deliberately contains the incident. `reproduce` exits zero only when the bug is actually reproduced. `verify` must pass on an AI repair branch after the source fix and added regression test. This prevents a polished dashboard from hiding a non-working repair.
+The current checkout contains the reviewed Duo repair and its regression tests, so `verify --fixture current` must pass on main. The original incident is preserved at `examples/checkout/baselines/duplicate-charge.py`; `reproduce --fixture seeded` checksum-checks that source, copies it into an isolated temporary directory with the unchanged acceptance tests and current regressions, and exits zero only when the fault produces actual failing tests and duplicate captures. It never overwrites current source. `verify --fixture seeded` must fail. Reproduction defaults to `seeded`; verification defaults to `current`.
 
 ## GitLab Duo Agent Platform setup
 
@@ -71,8 +71,8 @@ The project must have Duo access and a supported runner. Read [GitLab's custom f
 1. In the project, go to **AI > Flows > New flow**.
 2. Name it **Aftercare** and paste `gitlab/flows/aftercare.yml`. The flow uses two `AgentComponent`s: incident triage and source repair. It explicitly passes the trigger context and project ID.
 3. Create and enable it for this project, then add a **mention** or **assignment** trigger. Use the service-account handle GitLab actually displays.
-4. Create an incident issue describing duplicate charges on repeated checkout, and invoke the flow. Do not include secrets or customer records.
-5. Inspect the real session, resulting repair MR and branch pipeline. The repair branch is `aftercare/repair-*`. CI enforces a path allowlist, an added regression test and unchanged verifier/policy.
+4. For a new incident, create an issue describing an actual current-source regression and invoke the flow. Do not include secrets or customer records. The original checkout incident has already been repaired; an agent must report that no new repair is needed if current verification passes. The historical source-repair execution remains inspectable through its immutable session and MR links.
+5. Inspect the real session, resulting repair MR and branch pipeline. A new repair branch is `aftercare/repair-*`. CI enforces a path allowlist, regression coverage and unchanged verifier/policy. The seeded incident baseline remains protected evidence, not the current service implementation.
 
 Prompt instructions are supported by executable gates. They are not a substitute for GitLab permissions. Custom CI variables are not automatically available to Duo execution. Do not put cloud or payment secrets in the flow YAML.
 
@@ -121,3 +121,15 @@ The commercial model is a hypothesis to validate: open-source contracts and cont
 ## Author and license
 
 Created and directed by **Shivam Gupta**, with AI-assisted engineering and review. [MIT](LICENSE). Commit sign-offs follow the [Developer Certificate of Origin 1.1](https://developercertificate.org/). No prior project was imported into Path A.
+
+## Firebase deployment
+
+The canonical public application is https://aftercare-release.web.app. Firebase Hosting serves the frontend and proxies API requests to the Cloud Run control plane. Sessions use the Firebase-compatible HttpOnly `__session` cookie.
+
+After setting up the named Firestore database and runtime identity as described in `docs/deployment.md`, deploy with:
+
+```sh
+GOOGLE_CLOUD_PROJECT=your-project bash deploy/firebase.sh
+```
+
+This builds the frontend, deploys the Cloud Run backend with exact allowed origins, and publishes a digest-bound Firebase Hosting version. It uses your signed-in gcloud identity and stores no deployment token in source. For a different site name, set `FIREBASE_SITE`; site names must be globally unique. Runtime API documentation is available at `/api/docs` with a self-hosted explorer under the same security policy.

@@ -105,3 +105,35 @@ def test_reconciliation_rejects_tampered_or_foreign_reversals():
         mutation(invalid)
         with pytest.raises(ValueError):
             validate_reconciliation(ledger, invalid)
+
+
+def test_artifact_persistence_failure_revokes_promotion(tmp_path, monkeypatch):
+    store = Store(tmp_path)
+    store.create_user("owner", "Owner", "owner@example.com")
+    controller = Controller(store)
+    run = new_run("duplicate-charge")
+    store.save_run("owner", run)
+    calls = []
+    def storage_failure(run_id, name, data):
+        calls.append(name)
+        if len(calls) == 2:
+            raise OSError("Storage failed after one successful upload")
+    monkeypatch.setattr(store, "put_artifact", storage_failure)
+    controller.user_lock("owner").acquire()
+    controller.execute("owner", run)
+    assert run["status"] == "failed"
+    assert not controller.user_lock("owner").locked()
+    active = json.loads((tmp_path / "runs" / run["id"] / "active-revision.json").read_text())
+    assert active["source"] == "safe.py"
+    assert run["after"]["contractStatus"] == "unverified"
+    assert [artifact["name"] for artifact in run["artifacts"]] == ["release.zip"]
+    assert store.seal_matches("owner", run)
+    assert verify_chain(run["events"])
+    assert next(stage for stage in run["stages"] if stage["id"] == "govern")["status"] == "failed"
+
+
+def test_malformed_evidence_is_rejected_without_crashing():
+    assert not verify_chain(None)
+    assert not verify_chain({"events": []})
+    assert not verify_chain(["not an event"])
+    assert not verify_chain([{"previousHash": "0" * 64, "hash": "invalid", "value": float("nan")}])

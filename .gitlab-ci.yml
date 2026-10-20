@@ -44,7 +44,7 @@ application_tests:
     - apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
     - python -m pip install --disable-pip-version-check -r requirements.txt
   script:
-    # The intentionally red checkout contract is tested by fault/repair jobs below.
+    # Current checkout contracts and the separate seeded fault are checked below.
     - python -m pytest tests -q --junitxml=artifacts/tests.xml
   artifacts:
     when: always
@@ -112,19 +112,20 @@ runtime_policy_contract:
   script:
     - python -c "from server.engine import POLICY; import json; assert POLICY['externalPayments'] is False; assert POLICY['failClosed'] is True; assert POLICY['maxAttempts'] <= 2; print(json.dumps(POLICY, indent=2))"
 
-expected_fault_demonstration:
+checkout_business_contracts:
   stage: monitor
   rules:
-    - if: '$CI_COMMIT_REF_NAME =~ /^aftercare\/repair-/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^aftercare\/repair-/'
-      when: never
     - when: on_success
   script:
-    # Reproduce exits zero ONLY when tests actually fail AND duplicate harm exists.
-    - python scripts/incident.py reproduce --output artifacts/seeded-fault
+    # A repaired main stays green. Reproduce the protected historical source in
+    # an isolated directory; separately require current source and regressions.
+    - python scripts/incident.py reproduce --fixture seeded --output artifacts/seeded-fault
     - python scripts/incident.py validate --output artifacts/seeded-fault
+    - python scripts/incident.py verify --fixture current --output artifacts/current-checkout
+    - python scripts/incident.py validate --output artifacts/current-checkout
   artifacts:
     when: always
-    paths: [artifacts/seeded-fault/]
+    paths: [artifacts/seeded-fault/, artifacts/current-checkout/]
     expire_in: 90 days
 
 ai_repair_contract:

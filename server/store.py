@@ -35,6 +35,8 @@ class Store:
                     run["completedAt"] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
                     run["stage"] = "govern"
                     run["decision"] = {"outcome": "stopped", "reason": "Controller restarted. Incomplete sandbox work stopped; start a new isolated recovery."}
+                    run["after"]["healthStatus"] = "unverified"
+                    run["after"]["contractStatus"] = "unverified"
                     folder = self.root / "runs" / run["id"]
                     if (folder / "safe.py").is_file():
                         safe_digest = hashlib.sha256((folder / "safe.py").read_bytes()).hexdigest()
@@ -44,7 +46,9 @@ class Store:
                     event["hash"] = event_hash(event)
                     run["events"].append(event)
                     for stage in run["stages"]:
-                        if stage["status"] in ("running", "pending"):
+                        if stage["id"] == "govern":
+                            stage.update(status="failed", detail="Controller restarted before completion")
+                        elif stage["status"] in ("running", "pending"):
                             stage.update(status="blocked", detail="Controller restarted before completion")
                     conn.execute("UPDATE runs SET body=?,sealed_sha256=? WHERE id=?", (json.dumps(run), hashlib.sha256(canonical(run)).hexdigest(), row["id"]))
         os.chmod(self.path, 0o600)
@@ -66,6 +70,13 @@ class Store:
 
     def save_run(self, user_id, run):
         with self.connection() as conn:
+            existing = conn.execute("SELECT user_id,sealed_sha256 FROM runs WHERE id=?", (run["id"],)).fetchone()
+            if existing and existing["user_id"] != user_id:
+                raise ValueError("Run owner mismatch")
+            if existing and existing["sealed_sha256"]:
+                if existing["sealed_sha256"] != hashlib.sha256(canonical(run)).hexdigest():
+                    raise ValueError("Completed run seal is immutable")
+                return
             conn.execute("INSERT INTO runs(id,user_id,body) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET body=excluded.body", (run["id"], user_id, json.dumps(run)))
 
     def seal_run(self, user_id, run):

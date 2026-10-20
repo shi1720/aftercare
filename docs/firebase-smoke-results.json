@@ -1,0 +1,80 @@
+{
+  "baseUrl": "https://aftercare-release.web.app",
+  "checks": {
+    "firebaseCookieRoundtrip": true,
+    "privateSessionCache": true,
+    "registrationLoginLogout": true,
+    "separateAccountHistory": true,
+    "foreignOriginRejected": true,
+    "missingPaths404": true,
+    "liveGitLabEvidence": true
+  },
+  "scenarios": [
+    {
+      "scenario": "duplicate-charge",
+      "runId": "6f46a18d-9ddb-4ce1-8cdf-8521cb13cc86",
+      "status": "recovered",
+      "metrics": {
+        "durationMs": 21623,
+        "testsPassed": 7,
+        "testsTotal": 7,
+        "requestsReplayed": 84,
+        "duplicateCharges": 23,
+        "modelCalls": 0,
+        "artifactsReused": 0,
+        "totalRequests": 162,
+        "healthProbes": 14,
+        "canaryRequests": 32,
+        "stabilityRequests": 20
+      },
+      "eventChainValid": true,
+      "artifactDigestsValid": true,
+      "ownerIsolation": true,
+      "concurrentRunRejected": true
+    },
+    {
+      "scenario": "tenant-leak",
+      "runId": "78289c2d-3c83-4ef3-9838-50c581252364",
+      "status": "recovered",
+      "metrics": {
+        "durationMs": 14023,
+        "testsPassed": 7,
+        "testsTotal": 7,
+        "requestsReplayed": 84,
+        "duplicateCharges": 0,
+        "modelCalls": 0,
+        "artifactsReused": 0,
+        "totalRequests": 162,
+        "healthProbes": 14,
+        "canaryRequests": 32,
+        "stabilityRequests": 20
+      },
+      "eventChainValid": true,
+      "artifactDigestsValid": true,
+      "ownerIsolation": true,
+      "concurrentRunRejected": true
+    },
+    {
+      "scenario": "unsafe-repair",
+      "runId": "c4a79eb3-e571-42b9-99bc-41e41077a00a",
+      "status": "blocked",
+      "metrics": {
+        "durationMs": 11828,
+        "testsPassed": 7,
+        "testsTotal": 7,
+        "requestsReplayed": 52,
+        "duplicateCharges": 23,
+        "modelCalls": 0,
+        "artifactsReused": 0,
+        "totalRequests": 129,
+        "healthProbes": 13,
+        "canaryRequests": 32,
+        "stabilityRequests": 20
+      },
+      "eventChainValid": true,
+      "artifactDigestsValid": true,
+      "ownerIsolation": true,
+      "concurrentRunRejected": true
+    }
+  ]
+}

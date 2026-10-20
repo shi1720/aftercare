@@ -117,7 +117,8 @@ def test_async_run_lock_and_evidence(app):
             store = app.state.store
             user_id = (await client.get("/api/session")).json()["user"]["id"]
             run["events"][0]["detail"] = "tampered"
-            store.save_run(user_id, run)
+            with store.connection() as conn:
+                conn.execute("UPDATE runs SET body=? WHERE id=?", (json.dumps(run), run["id"]))
             assert (await client.get("/api/runs/" + run_id + "/evidence")).status_code == 409
     asyncio.run(check())
 
@@ -187,7 +188,8 @@ def test_completed_manifest_tamper_rejected_even_with_valid_event_chain(client, 
     app.state.store.seal_run(user["id"], run)
     assert client.get("/api/runs/" + run["id"] + "/evidence").status_code == 200
     run["diff"]["after"] = "tampered source outside the event chain"
-    app.state.store.save_run(user["id"], run)
+    with app.state.store.connection() as conn:
+        conn.execute("UPDATE runs SET body=? WHERE id=?", (json.dumps(run), run["id"]))
     assert client.get("/api/runs/" + run["id"] + "/evidence").status_code == 409
     with pytest.raises(ValueError, match="immutable"):
         app.state.store.seal_run(user["id"], run)
