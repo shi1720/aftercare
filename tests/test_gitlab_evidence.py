@@ -94,3 +94,19 @@ def test_config_cannot_inject_url_or_project(monkeypatch):
     result = GitLabEvidence().get()
     assert result["sessionUrl"] == PROJECT_URL + "/-/automate/agent-sessions/9737653"
     assert result["flowUrl"] == PROJECT_URL + "/-/automate/flows/1018811"
+
+
+def test_latest_matching_mr_pipeline_takes_precedence_over_older_push(monkeypatch):
+    reader = GitLabEvidence()
+    payloads = {
+        "pipelines": [
+            {"id": 57, "status": "success", "sha": SHA, "ref": "refs/merge-requests/2/head", "source": "merge_request_event"},
+            {"id": 44, "status": "failed", "sha": SHA, "ref": "aftercare/repair-test", "source": "push"},
+        ],
+        "mergeRequests": [{"iid": 2, "title": "Repair", "source_branch": "aftercare/repair-test", "state": "opened", "sha": SHA}],
+        "issue": {"iid": 1},
+    }
+    monkeypatch.setattr(reader, "_read_json", lambda key: payloads[key])
+    result = reader.get()
+    assert result["mergeRequests"][0]["pipeline"]["id"] == 57
+    assert result["pipelines"][1]["status"] == "failed"

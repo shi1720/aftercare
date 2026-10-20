@@ -4,6 +4,7 @@ No personal token, private API, configurable host, or caller-supplied URL is use
 A session link is a navigation reference; this reader makes no session-status claim.
 """
 import copy
+import http.client
 import json
 import os
 import re
@@ -80,7 +81,8 @@ class GitLabEvidence:
             mr = {"iid": row["iid"], "title": str(row.get("title", "Untitled repair"))[:300], "state": row["state"], "url": PROJECT_URL + "/-/merge_requests/" + str(row["iid"]), "sourceBranch": row["source_branch"], "sha": row["sha"]}
             # Link a pipeline only when the public API identifies the same commit
             # and branch, or explicitly provides this MR's head pipeline.
-            matched = next((pipeline for pipeline in pipelines if pipeline["sha"] == mr["sha"] and pipeline["ref"] == mr["sourceBranch"]), None)
+            mr_refs = {mr["sourceBranch"], "refs/merge-requests/" + str(mr["iid"]) + "/head", "refs/merge-requests/" + str(mr["iid"]) + "/merge"}
+            matched = next((pipeline for pipeline in pipelines if pipeline["sha"] == mr["sha"] and pipeline["ref"] in mr_refs), None)
             if not matched:
                 matched = self._pipeline(row.get("head_pipeline"))
                 if matched and matched["sha"] != mr["sha"]:
@@ -110,7 +112,7 @@ class GitLabEvidence:
                 for key, future in futures.items():
                     try:
                         values[key] = future.result()
-                    except (OSError, ValueError, urllib.error.URLError, TimeoutError):
+                    except (OSError, ValueError, urllib.error.URLError, TimeoutError, http.client.HTTPException):
                         failures.append(key)
             if not values and self._last_good:
                 result = copy.deepcopy(self._last_good)

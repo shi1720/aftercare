@@ -1,0 +1,162 @@
+{
+  "scenarios": [
+    {
+      "scenario": "tenant-leak",
+      "runId": "ece5a93b-d659-4035-a791-d4003da38e67",
+      "status": "recovered",
+      "before": {
+        "revision": "11ee1e3c1a47",
+        "healthStatus": "healthy",
+        "contractStatus": "failed"
+      },
+      "after": {
+        "revision": "47bf21b43b5c",
+        "healthStatus": "healthy",
+        "contractStatus": "passed"
+      },
+      "metrics": {
+        "durationMs": 13545,
+        "testsPassed": 7,
+        "testsTotal": 7,
+        "requestsReplayed": 84,
+        "duplicateCharges": 0,
+        "modelCalls": 0,
+        "artifactsReused": 0,
+        "totalRequests": 162,
+        "healthProbes": 14,
+        "canaryRequests": 32,
+        "stabilityRequests": 20
+      },
+      "integrity": {
+        "algorithm": "SHA-256",
+        "head": "48f12d0de7765f8d5d4bf1cdc892d55906dd1c44ccaedb7acd8d1b2d98041e24",
+        "limitations": "Hash chain detects modification relative to a trusted head. It is not an external signature, timestamp, or independent proof of execution.",
+        "manifestSha256": "dd0ece21cd935edf03d6c88fbaf6af370ec6851f5aa3602ddc1ad173cfe12ad7",
+        "sealed": true,
+        "verified": true
+      }
+    },
+    {
+      "scenario": "unsafe-repair",
+      "runId": "c0d317b8-454d-4360-af10-90705e521277",
+      "status": "blocked",
+      "before": {
+        "revision": "4bbb2da1f75b",
+        "healthStatus": "healthy",
+        "contractStatus": "failed"
+      },
+      "after": {
+        "revision": "47bf21b43b5c",
+        "healthStatus": "healthy",
+        "contractStatus": "passed"
+      },
+      "metrics": {
+        "durationMs": 10826,
+        "testsPassed": 7,
+        "testsTotal": 7,
+        "requestsReplayed": 52,
+        "duplicateCharges": 23,
+        "modelCalls": 0,
+        "artifactsReused": 0,
+        "totalRequests": 129,
+        "healthProbes": 13,
+        "canaryRequests": 32,
+        "stabilityRequests": 20
+      },
+      "integrity": {
+        "algorithm": "SHA-256",
+        "head": "ad6f5d7edba50558e819847b42b6b10a821ec5c7770130b5d855309a54acd785",
+        "limitations": "Hash chain detects modification relative to a trusted head. It is not an external signature, timestamp, or independent proof of execution.",
+        "manifestSha256": "1d942c8904546df333dbfe97e44c3d987bce6c2e2127bf0e5fec1d00f2674a0a",
+        "sealed": true,
+        "verified": true
+      }
+    }
+  ],
+  "gitlabProof": {
+    "projectUrl": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare",
+    "flowUrl": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/flows/1018811",
+    "issueUrl": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/issues/1",
+    "sessionUrl": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions/9737653",
+    "checkedAt": "2026-10-20T09:43:26.511469Z",
+    "pipelines": [
+      {
+        "id": 2966841144,
+        "status": "success",
+        "sha": "b00c4663cbd6353d7755018cee9fc0e2dfaa68c6",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966841144",
+        "ref": "main",
+        "source": "push"
+      },
+      {
+        "id": 2966838084,
+        "status": "canceled",
+        "sha": "60eb90a2312464e330cbb886d630ffb0e9f84f3d",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966838084",
+        "ref": "main",
+        "source": "push"
+      },
+      {
+        "id": 2966834617,
+        "status": "success",
+        "sha": "fadd583d8a27769bb82bbb318e4c33a309a133a5",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966834617",
+        "ref": "refs/merge-requests/1/head",
+        "source": "merge_request_event"
+      },
+      {
+        "id": 2966832817,
+        "status": "failed",
+        "sha": "fadd583d8a27769bb82bbb318e4c33a309a133a5",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966832817",
+        "ref": "aftercare/repair-issue-1",
+        "source": "push"
+      },
+      {
+        "id": 2966825574,
+        "status": "success",
+        "sha": "8cff1260384ca076dbe3f9c7ab396c42a8447248",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966825574",
+        "ref": "refs/workloads/65e9a6b6b97",
+        "source": "duo_workflow"
+      },
+      {
+        "id": 2966824262,
+        "status": "failed",
+        "sha": "8cff1260384ca076dbe3f9c7ab396c42a8447248",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966824262",
+        "ref": "main",
+        "source": "push"
+      },
+      {
+        "id": 2966821636,
+        "status": "canceled",
+        "sha": "21a0fce523971ec4684ca13b54e715074362a098",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966821636",
+        "ref": "main",
+        "source": "push"
+      }
+    ],
+    "mergeRequests": [
+      {
+        "iid": 1,
+        "title": "Restore tenant-scoped checkout idempotency (Refs #1)",
+        "state": "opened",
+        "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/merge_requests/1",
+        "sourceBranch": "aftercare/repair-issue-1",
+        "sha": "fadd583d8a27769bb82bbb318e4c33a309a133a5",
+        "pipeline": {
+          "id": 2966834617,
+          "status": "success",
+          "sha": "fadd583d8a27769bb82bbb318e4c33a309a133a5",
+          "url": "https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966834617",
+          "ref": "refs/merge-requests/1/head",
+          "source": "merge_request_event"
+        }
+      }
+    ],
+    "available": true,
+    "stale": false,
+    "detail": "Live public GitLab API evidence. Repair MRs are filtered to aftercare/repair- branches. The linked Duo session status is not queried or inferred."
+  }
+}

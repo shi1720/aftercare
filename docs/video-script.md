@@ -1,8 +1,8 @@
 # Aftercare: recording script
 
-Target duration: **2 minutes 35 seconds**, with a hard export limit of **2 minutes 55 seconds**. Narration is approximately 290 words; read at a calm 125–135 words per minute and leave room for visual proof.
+Target duration: **2 minutes 35 seconds**, with a hard export limit of **2 minutes 55 seconds**. Narration is approximately 290 words; read at a calm 110–120 words per minute and leave room for visual proof.
 
-Record real application and GitLab execution. Complete [evidence status](evidence-status.md) first. Do not film the connected-flow segment until a genuine Duo session, repair MR and passed branch pipeline exist. If they are unavailable, keep the video in rehearsal status; do not substitute a local run or a fabricated screen.
+Record the real [public application](https://aftercare-359201230061.us-central1.run.app) and completed GitLab execution linked below. The genuine Duo session, source-repair MR and passed pipelines now exist. A 155-second silent edit with burned-in captions is provided as `Aftercare-demo-silent.mp4`. Human voice recording and YouTube upload are the remaining video steps. Read alongside the timed `Aftercare-narration.srt`; its timing matches the prepared edit. Keep actual run IDs and timestamps visible; do not substitute fabricated screens.
 
 ## Verbatim narration
 
@@ -38,16 +38,21 @@ Aftercare: don't just recover the service. Keep the customer promise, and bring 
 
 | Time | Screen and action | Proof to keep legible |
 | --- | --- | --- |
-| 0:00–0:10 | Start on Aftercare landing page. Keep the headline visible; no animated title card is needed. | Product name, Shivam introduction, customer problem. |
-| 0:10–0:24 | Open sandbox. Choose the duplicate-charge scenario. | Isolated/synthetic scope visible. |
-| 0:24–0:40 | Open the run's incident and health evidence. Expand measured observations. | Actual HTTP health status 200; 24 checkout requests; 23 duplicate captures. |
-| 0:40–0:58 | Expand safe-revision restoration and reconciliation events. Show the downloadable ledger briefly. | Safe source verified; 23 reversals; append-only history; reconciliation idempotency evidence. |
-| 0:58–1:16 | Show repair diff, stage track, contract results and canary event. | Actual source, 7 passing reference contracts, 32 business HTTP requests; health probes counted separately. |
-| 1:16–1:29 | Export/open the JSON evidence; keep source hash and final chain head readable. | Download works; integrity limitation stated. |
-| 1:29–2:03 | Switch to the genuine GitLab Duo session. Show run_command results, repair MR diff, added regression and passed repair pipeline. | Real session/MR/pipeline URLs, source edits and unchanged contract; do not use fake UI overlays. |
-| 2:03–2:12 | Return to the app's execution-mode explanation. | Deterministic reference versus supervised Duo clearly distinguished. |
-| 2:12–2:29 | Run unsafe repair; expand AST rejection and safe-revision validation. | Candidate blocked before execution; safe revision retained. |
-| 2:29–2:35 | End on recovered run or landing headline. | Buyer and closing promise; no unsupported customer/revenue claim. |
+| 0:00–0:26 | Landing page and opening problem. | Product, synthetic scope and customer story. |
+| 0:26–0:44 | Recorded recovery, at original execution speed. | One continuous run, real stage transitions. |
+| 0:44–0:50 | Health evidence. | HTTP 200 versus failing business contract. |
+| 0:50–0:57 | Ledger evidence. | 24 captures, 23 compensating entries, idempotency. |
+| 0:57–1:09 | Reference repair diff. | Actual tested source. |
+| 1:09–1:16 | Recovered run overview. | Contract, package and canary outcomes. |
+| 1:16–1:33 | Evidence export. | Downloadable hashes and decision record. |
+| 1:33–1:38 | Finished Duo session 9737653. | Actual platform execution. |
+| 1:38–1:46 | Duo repair result. | Ten passing fixture/regression tests. |
+| 1:46–1:57 | Actual MR !1 source and test diff. | AI-generated repair, original contract unchanged. |
+| 1:57–2:01 | Full main pipeline 2966841144. | Separate nine-stage reference/application CI. |
+| 2:01–2:10 | Execution modes. | Deterministic reference versus supervised AI. |
+| 2:10–2:25 | Recorded unsafe run, at original execution speed. | Policy refusal and safe revision verification. |
+| 2:25–2:28 | AST refusal evidence. | Forbidden capabilities blocked before execution. |
+| 2:28–2:35 | Landing page and closing line. | Buyer and promise. |
 
 Normal editing can remove waiting time; disclose “waiting time shortened” on screen when cuts compress execution. Never splice different runs into one apparent execution. Keep the same run ID visible through each scenario.
 

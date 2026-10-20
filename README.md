@@ -6,9 +6,11 @@ Aftercare closes the gap between a healthy deployment and a correct customer out
 
 Built by **Shivam Gupta** for GitLab Transcend 2026. **Path A · Supervised GitLab repair workflow.** The public reference sandbox runs its bounded loop hands-off. This distinction is visible in the product.
 
+- [Live Google Cloud app](https://aftercare-359201230061.us-central1.run.app)
 - [Public GitLab project](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare)
 - [CI/CD history](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines)
-- [Duo sessions](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions)
+- [Executed Duo session](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions/9737653)
+- [AI-generated repair MR](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/merge_requests/1)
 - [MIT license](LICENSE) · [Security boundaries](SECURITY.md)
 
 ## The customer problem
@@ -33,7 +35,7 @@ Open the deployed URL in [deployment evidence](docs/deployment.md), then choose 
 | Public reference sandbox | Reviewed deterministic templates, real Python subprocess tests, loopback HTTP traffic, synthetic ledger reconciliation, artifact sealing, pointer promotion and postcheck | Hands-off inside an isolated fixture only. Zero model calls. |
 | GitLab Duo flow | AI triage of a checked-in fault, source repair, added regression test, verification and repair MR using GitLab tools | Supervised. Final MR stays open for review. No live processor or automatic real deployment. |
 
-The interface does not impersonate a GitLab session. A repository YAML file alone does not mean a flow ran. Actual external execution evidence belongs in [the evidence status](docs/evidence-status.md).
+The **GitLab workflow** page retrieves real public pipeline and repair-MR metadata from the fixed public project, with explicit stale/error states and direct links to the registered flow and actual Duo session. It uses no private token. The interface does not impersonate a GitLab session. A repository YAML file alone does not mean a flow ran. Actual external execution evidence belongs in [the evidence status](docs/evidence-status.md).
 
 ## Run locally
 

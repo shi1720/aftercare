@@ -1,6 +1,6 @@
 # Devpost submission copy
 
-This document supplies factual copy. It does not assert that Devpost has received a submission. Before submitting, complete the actual live URL, Duo session, repair MR, passed pipeline and YouTube fields in [evidence status](evidence-status.md), then verify every link signed out.
+This document supplies factual copy backed by the live deployment and actual GitLab executions linked below. It does not assert that Devpost has received a submission. **Human voice recording, YouTube upload and final Devpost submission remain pending.** A Devpost draft attempt was blocked twice by reCAPTCHA service-connection errors; no challenge was solved or bypassed. See [evidence status](evidence-status.md) for the final handoff.
 
 ## Project name
 
@@ -44,7 +44,7 @@ The GitLab Duo configuration defines two AgentComponents. The investigation agen
 
 CI builds the interface, tests the API/controller and CLI, audits Python dependencies, checks restricted AST capabilities, packages source, executes actual sandbox recovery scenarios and retains evidence. Main's intentionally defective fixture is an expected-failure demonstration: the reproduce command succeeds only when it observes real duplicate captures and failing contracts. Repair branches must instead pass the business contract and added regression.
 
-The repository also includes a non-root container build and Google Cloud deployment code. Actual deployment and connected-flow execution status are recorded in the linked evidence document; configuration alone is not presented as execution.
+The reference application is deployed publicly on [Google Cloud Run](https://aftercare-359201230061.us-central1.run.app), with Firestore persistence. Its actual cloud smoke test passed health, registration/login/logout, guest isolation, artifact-digest checks and a recovered duplicate-charge scenario. The repository includes its non-root container build and Google Cloud deployment code. These results are captured in [cloud-smoke-results.json](cloud-smoke-results.json).
 
 ## Lifecycle stages
 
@@ -62,11 +62,13 @@ Our initial buyer hypothesis is a small SaaS platform or engineering team alread
 
 The hardest design choice was assigning authority honestly. A browser animation is not an agent run, a passing health check is not a customer guarantee, and a hash is not independent attestation.
 
-We made each distinction observable: the browser uses a deterministic reference controller, real subprocess and HTTP results drive state, the separate Duo flow must produce actual source edits, and unsafe candidates stop before execution. We also kept rollback and reconciliation distinct, because returning to a safe revision does not repair existing duplicate ledger entries.
+We made each distinction observable: the browser uses a deterministic reference controller, real subprocess and HTTP results drive state, the separate Duo flow produced independently verified source edits, and unsafe candidates stop before execution. We also kept rollback and reconciliation distinct, because returning to a safe revision does not repair existing duplicate ledger entries.
 
 ## Accomplishments
 
 We built an authenticated, usable product around a specific customer failure, rather than a collection of automation prompts. Its happy path produces verifiable artifacts, and its refusal path demonstrates that autonomy remains bounded. The implementation includes adversarial contracts, session isolation, tamper detection, source-bound packaging and repeatable incident reproduction.
+
+The completed [Duo session](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions/9737653) generated [MR 1](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/merge_requests/1), modifying exactly the permitted service file and adding five regression tests. The existing acceptance contract was unchanged. The repair pipeline passed all ten business-contract tests. An independent counterfactual check found that four of the five new regressions fail against the original source. The full main pipeline passed its nine stages, including 38 application/CLI tests at that snapshot; a subsequent local test addition brings the latest local suite to 39.
 
 ## What we learned
 
@@ -86,13 +88,21 @@ GitLab Duo Agent Platform, GitLab CI/CD, Python, FastAPI, React, TypeScript, Vit
 
 ## Pipeline and agent evidence
 
-[CI/CD history](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines) · [Duo sessions](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions)
+- [Completed Duo session 9737653](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions/9737653)
+- [Successful Duo workload pipeline 2966825574](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966825574)
+- [AI-generated repair MR 1, left open for human review](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/merge_requests/1)
+- [Successful repair pipeline 2966834617: ten contract tests](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966834617)
+- [Successful full main pipeline 2966841144: nine stages](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966841144)
 
-These are project index pages. Use the specific successful execution URLs recorded in [evidence status](evidence-status.md) when completing the final form and recording the video. Do not claim an index page proves a particular run succeeded.
+The single repair gate and the full main pipeline prove different scopes. The repair MR's source commit is `fadd583d8a27769bb82bbb318e4c33a309a133a5`; no merge or customer production deployment is claimed.
 
 ## Live project and video fields
 
-Copy the verified public application URL from [deployment evidence](deployment.md) after a signed-out smoke test. Copy the completed YouTube URL from [evidence status](evidence-status.md) after watching the full export signed out. Do not submit this document's internal links as substitutes for those fields.
+**Live Google Cloud project:** [Aftercare public application](https://aftercare-359201230061.us-central1.run.app).
+
+**YouTube video:** pending Shivam's voice recording and upload. The verbatim narration and exact shot list are in [video-script.md](video-script.md). Once uploaded, watch the full export signed out and copy its real YouTube URL into Devpost.
+
+**Devpost submission:** pending. The draft workflow encountered reCAPTCHA service-connection errors on two attempts. A human must complete the remaining challenge/form and final submission; this document is not evidence of entry.
 
 ## Environmental Impact prize
 
