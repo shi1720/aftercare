@@ -2864,7 +2864,7 @@ function PolicyPage({
             <p>
               {connected
                 ? "A GitLab configuration is available. Inspect each recovery’s linked issue, merge request and pipeline evidence to confirm what executed."
-                : "The local controller executes real recovery checks in an isolated sandbox. Repairs are deterministic. No GitLab pipeline or LLM call is implied by a sandbox run."}
+                : "The reference controller executes real recovery checks in an isolated sandbox using deterministic repairs. Source repair runs separately in GitLab Duo. Inspect the live workflow for its actual session and pipeline evidence."}
             </p>
             <div className="connection-facts">
               <div>
@@ -2872,11 +2872,11 @@ function PolicyPage({
                 <strong>Isolated sandbox</strong>
               </div>
               <div>
-                <span>GitLab configuration</span>
+                <span>Run integration</span>
                 <strong>
                   {data.integration.gitlabConfigured
-                    ? "Available"
-                    : "Not configured"}
+                    ? "GitLab available"
+                    : "Reference only"}
                 </strong>
               </div>
               <div>
@@ -3268,13 +3268,13 @@ function HelpModal({
         </div>
         <div className={connected ? "mode-current" : ""}>
           <span className="eyebrow">
-            {connected ? "CONFIGURED CONNECTION" : "AVAILABLE IN SOURCE"}
+            {connected ? "CONFIGURED CONNECTION" : "SUPERVISED WORKFLOW"}
           </span>
           <h3>GitLab Duo flow</h3>
           <p>
-            Custom flow instructions for agent diagnosis and scoped repair in
-            GitLab. The connected setup requires a GitLab namespace and runner.
-            Judge execution by linked pipeline evidence.
+            GitLab Duo investigates and repairs source in a separate workflow.
+            Inspect the actual session, merge request and pipeline results in
+            GitLab workflow.
           </p>
         </div>
       </div>

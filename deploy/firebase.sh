@@ -12,7 +12,9 @@ gcloud services enable firebase.googleapis.com firebasehosting.googleapis.com ru
 npm --prefix web ci
 npm --prefix web run build
 EXISTING_URL="$(gcloud run services describe "$SERVICE" --project "$GOOGLE_CLOUD_PROJECT" --region "$REGION" --format='value(status.url)' 2>/dev/null || true)"
+PROJECT_NUMBER="$(gcloud projects describe "$GOOGLE_CLOUD_PROJECT" --format='value(projectNumber)')"
 ORIGINS="https://${SITE}.web.app,https://${SITE}.firebaseapp.com"
 if [[ -n "$EXISTING_URL" ]]; then ORIGINS="$ORIGINS,$EXISTING_URL"; fi
+ORIGINS="$ORIGINS,https://${SERVICE}-${PROJECT_NUMBER}.${REGION}.run.app"
 gcloud run deploy "$SERVICE" --project "$GOOGLE_CLOUD_PROJECT" --region "$REGION" --source . --service-account "$RUNTIME" --allow-unauthenticated --no-cpu-throttling --memory 512Mi --cpu 1 --min-instances 0 --max-instances 1 --concurrency 20 --timeout 300 --set-env-vars "^|^DATA_DIR=/tmp/aftercare|COOKIE_SECURE=true|AFTERCARE_STORE=firestore|GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT|FIRESTORE_DATABASE=$DATABASE|APP_ORIGIN=https://${SITE}.web.app|APP_ORIGINS=$ORIGINS" --quiet
 python3 deploy/firebase-hosting.py --project "$GOOGLE_CLOUD_PROJECT" --site "$SITE" --skip-build

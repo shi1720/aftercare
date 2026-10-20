@@ -1,31 +1,27 @@
 # Verified execution evidence
 
-Verified on October 20, 2026. This file separates observed platform execution from the deterministic reference product. All links refer to actual resources.
+Verified October 20, 2026. The reference sandbox and GitLab AI source-repair workflow have distinct execution scopes.
 
-| Requirement | Evidence |
+| Requirement | Actual evidence |
 | --- | --- |
-| Public original Path A project | [Aftercare on GitLab](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare), created October 20, root MIT LICENSE |
-| Registered and enabled custom Duo flow | [Aftercare flow 1018811](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/flows/1018811), service account `ai-aftercare-gitlab-ai-hackathon`, mention and assignment triggers |
-| Actual Duo execution | [Finished session 9737653](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions/9737653), [successful workload pipeline 2966825574](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966825574) |
-| Actual independently generated repair | [Merge request !1](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/merge_requests/1), source commit `fadd583d8a27769bb82bbb318e4c33a309a133a5`, exactly two permitted files changed |
-| Repair acceptance | [Passed MR pipeline 2966834617](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966834617), 10 passing fixture/regression tests, protected original acceptance tests unchanged |
-| Regression sensitivity | Independent replay of the five added regressions on the original source caused four failures; repaired source passes all ten tests |
-| Full reference/application CI | [Passed full pipeline 2966841144](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966841144), all nine stages complete, source commit `b00c4663cbd6353d7755018cee9fc0e2dfaa68c6` |
-| Local application validation | 39 tests pass, TypeScript/Vite production build passes, npm audit and Python advisory audit found no known vulnerabilities at verification time |
-| Live Google Cloud product | [Public Aftercare app](https://aftercare-359201230061.us-central1.run.app); Cloud Run with dedicated named Firestore database and dedicated runtime identity |
-| Cloud smoke test | [Measured result JSON](cloud-smoke-results.json): recovery, real healthy HTTP versus failed contract, 23 duplicate synthetic debits, artifact digest verification, guest ownership isolation, registration/login/logout |
-| Reference recovery | Duplicate charge and tenant leak recover; unsafe executable capabilities blocked before candidate execution. Each run executes real subprocess tests, loopback HTTP checks, five-second observation and downloadable evidence. |
-| Video | Verbatim narration and shot list ready in [video-script.md](video-script.md). A 155-second 1080p silent edit with captions and original-speed recovery/refusal recordings is prepared. Human voice recording and public YouTube upload remain pending. |
-| Devpost | Copy ready in [devpost-submission.md](devpost-submission.md). Draft creation was blocked twice by a reCAPTCHA connection error. The user must complete Devpost entry and final submission. |
+| Public application | https://aftercare-release.web.app, Firebase Hosting with same-origin Cloud Run API and dedicated Firestore database |
+| Public MIT source | https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare |
+| Registered Duo flow | Flow 1018811, two agents with bounded repair instructions |
+| Actual completed Duo session | [Session 9737653](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions/9737653) |
+| Actual source repair | [MR 1, merged](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/merge_requests/1). Exactly service.py and a new regression file changed in the original agent proposal. The original contract was preserved. |
+| Regression sensitivity | Four of five added regressions fail against the original source; repaired current source passes all ten business tests |
+| Passed merged-main CI | [Pipeline 2967016054](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2967016054), source 879576e71576d4bf85bfba1892429419ddc28d32, 11 jobs across all nine stages, 66 application/integration tests |
+| Passed full repair-branch CI | [Pipeline 2966905048](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966905048), prior to merge. The merged source branch was deleted after checks passed. |
+| Firebase end-to-end checks | [Measured results](firebase-smoke-results.json): both recovery cases, blocked unsafe candidate, login/logout, cookie round trip, ownership isolation, event chains, artifact digests, CSRF and missing-path behavior |
+| Browser checks | Registration, private empty account workspace, session persistence, search, filter clearing, mobile navigation, run reloads, JSON previews and downloaded evidence; responsive layout at 390, 768 and 1440 pixels with no document overflow |
+| API explorer | /api/docs loads its own assets and the live schema under self-only script CSP; a real hosted health request returned HTTP 200 |
+| Product demo | Final 129.74-second voiced edit with English captions, genuine recovery/refusal recordings and real GitLab evidence. Public upload is tracked in the final submission handoff. |
+| Devpost draft | Existing entry 1247898, titled Aftercare. Fields are being completed at the existing draft; final prize-entry submission requires the owner. |
 
-## What the evidence proves
+## Boundaries
 
-The repair pipeline verifies source repair and its regression tests. The broader nine-stage recovery, packaging and synthetic compensation use the reference controller and full application pipeline. These are separate scopes and are labeled accordingly. Neither loop makes real payment refunds.
+The browser sandbox performs real subprocess tests and loopback requests against fixed first-party fixtures. Its known repairs are deterministic and make zero model calls. GitLab Duo independently diagnosed and repaired checked-in source. Merging that source does not imply a production payment deployment.
 
-The public app's GitLab workflow page retrieves actual public pipeline and MR metadata. It links the real session without inventing a session status. The reference dashboard reports zero model calls because it uses deterministic known templates.
+Credits are synthetic. No processor or customer payment is contacted. Completed event chains and manifest seals detect mutation relative to a trusted head; they are not independent signatures or compliance certifications.
 
-Hashes detect mutation relative to a trusted chain head. They do not provide an external signature or independently prove authorship. The completed run manifest separately seals metadata, the source diff and artifact list.
-
-After rebasing MR !1, its current source is `815eed8a6f5f5a73453b71da5c9ebeb6e20491b5`; [acceptance pipeline 2966905098](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966905098) passes. The original AI-generated commit above remains the historical session evidence.
-
-The rebased repair branch also passes [full pipeline 2966905048](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines/2966905048): all 11 jobs across nine stages, including `ai_repair_contract` instead of the expected-fault job. This is distinct from the one-job MR acceptance pipeline.
+The original defective source is preserved as a hash-bound explicit baseline. Main now verifies the repaired current source as well as reproduction of that baseline. Historical session and original commit evidence remain available after the branch is removed.

@@ -1,8 +1,8 @@
-# Aftercare: recording script
+# Aftercare product demo
 
-Target duration: **2 minutes 35 seconds**, with a hard export limit of **2 minutes 55 seconds**. Narration is 277 words; read at a calm 110–120 words per minute and leave room for visual proof.
+The complete narrated video is `Aftercare-demo-final.mp4`: **129.74 seconds**, 1920 by 1080, with burned-in English captions. The narration uses a standard Google Cloud Chirp 3 HD Orus voice. It does not imitate or claim to be Shivam Gupta. There is no music or event branding in the narration.
 
-Record the real [public application](https://aftercare-359201230061.us-central1.run.app) and completed GitLab execution linked below. The genuine Duo session, source-repair MR and passed pipelines now exist. A 155-second silent edit with burned-in captions is provided as `Aftercare-demo-silent.mp4`. A standard synthetic narration track and YouTube upload are the remaining video steps. Read alongside the timed `Aftercare-narration.srt`; its timing matches the prepared edit. Keep actual run IDs and timestamps visible; do not substitute fabricated screens.
+Recovery and refusal clips preserve actual capture timing. Only idle final holds were trimmed. Each scenario retains one run ID throughout its shots. GitLab footage shows the real source repair and passed pipeline; the separate deterministic reference run makes no model calls.
 
 ## Verbatim narration
 
@@ -36,36 +36,27 @@ Keep the customer promise, and bring the proof.
 
 ## Exact shot list
 
-| Time | Screen and action | Proof to keep legible |
+| Time | Asset | Provenance |
 | --- | --- | --- |
-| 0:00–0:26 | Landing page and opening problem. | Product, synthetic scope and customer story. |
-| 0:26–0:44 | Recorded recovery, at original execution speed. | One continuous run, real stage transitions. |
-| 0:44–0:50 | Health evidence. | HTTP 200 versus failing business contract. |
-| 0:50–0:57 | Ledger evidence. | 24 captures, 23 compensating entries, idempotency. |
-| 0:57–1:09 | Reference repair diff. | Actual tested source. |
-| 1:09–1:16 | Recovered run overview. | Contract, package and canary outcomes. |
-| 1:16–1:33 | Evidence export. | Downloadable hashes and decision record. |
-| 1:33–1:38 | Finished Duo session 9737653. | Actual platform execution. |
-| 1:38–1:46 | Duo repair result. | Ten passing fixture/regression tests. |
-| 1:46–1:57 | Actual MR !1 source and test diff. | AI-generated repair, original contract unchanged. |
-| 1:57–2:01 | Full main pipeline 2966841144. | Separate nine-stage reference/application CI. |
-| 2:01–2:10 | Execution modes. | Deterministic reference versus supervised AI. |
-| 2:10–2:25 | Recorded unsafe run, at original execution speed. | Policy refusal and safe revision verification. |
-| 2:25–2:28 | AST refusal evidence. | Forbidden capabilities blocked before execution. |
-| 2:28–2:35 | Landing page and closing line. | Buyer and promise. |
+| 0:00 to 0:17 | `landing.png` | Genuine interface capture. |
+| 0:17 to 0:40 | `launch-recovery.mp4` | Genuine interface capture. |
+| 0:40 to 0:46 | `ledger.png` | Genuine interface capture. |
+| 0:46 to 0:56 | `repair.png` | Genuine interface capture. |
+| 0:56 to 1:02 | `recovered.png` | Genuine interface capture. |
+| 1:02 to 1:10 | `evidence.png` | Genuine interface capture. |
+| 1:10 to 1:18 | `artifact-preview.png` | Genuine interface capture. |
+| 1:18 to 1:23 | `duo-session.png` | Genuine interface capture. |
+| 1:23 to 1:28 | `duo-repair.png` | Genuine interface capture. |
+| 1:28 to 1:29 | `gitlab-merged-repair.png` | Genuine interface capture. |
+| 1:29 to 1:34 | `gitlab-repair-diff.png` | Genuine interface capture. |
+| 1:34 to 1:38 | `pipeline.png` | Genuine interface capture. |
+| 1:38 to 1:50 | `modes.png` | Genuine interface capture. |
+| 1:50 to 2:02 | `launch-unsafe.mp4` | Genuine interface capture. |
+| 2:02 to 2:05 | `refusal.png` | Genuine interface capture. |
+| 2:05 to 2:09 | `landing.png` | Genuine interface capture. |
 
-Normal editing can remove waiting time; disclose “waiting time shortened” on screen when cuts compress execution. Never splice different runs into one apparent execution. Keep the same run ID visible through each scenario.
+## Verification and publishing
 
-## Rehearsal and capture
+The export contains H.264 picture, AAC narration and readable burned-in subtitles. Captions are also provided in `Aftercare-narration.srt`. Narration has no internal silence longer than 1.2 seconds; the final headline holds for about two seconds after the closing line. Crops focus the evidence panel and omit platform logos and event breadcrumbs. Raw captures remain unchanged.
 
-1. Use a clean browser profile and a fresh sandbox. Close unrelated tabs and hide the bookmarks bar. Set 1440×900 capture or equivalent, with browser zoom around 100–110% so evidence remains readable.
-2. Test duplicate charge, unsafe repair, downloads and the GitLab links before recording. Keep original recordings and exported evidence. Record a fresh Duo run when possible; otherwise show its real timestamps and identify it as a recorded execution.
-3. Open the relevant GitLab session, MR and pipeline tabs beforehand. Do not expose tokens, account settings, personal email, cloud billing or unrelated repositories.
-4. Generate a standard synthetic narration voice using only the verbatim text above. Preserve brief pauses after “charged twice” and “bring the proof.” Keep camera instructions out of the audio and review alignment with the final captions.
-5. Match screenshots and narration to actual measured values. If a test count changes, correct the script before recording. Do not adjust the display or evidence to fit the script.
-6. Export without music or third-party logos added as decoration. Necessary platform footage should show the genuine workflow. Avoid unrelated trademarks and unlicensed media.
-7. Watch the full export at normal speed. Verify all text remains legible and the runtime is below three minutes. Upload to YouTube with visibility required by the hackathon's current rules, then verify playback from a signed-out browser.
-
-Suggested title: **Aftercare  -  Your health check is green. Your customer was charged twice.**
-
-Suggested description: “Created and directed by Shivam Gupta. Supervised GitLab Duo repair workflow. The public reference sandbox uses deterministic repairs and synthetic credits. Source, setup and execution evidence are linked in the public GitLab repository.”
+Upload the final file to YouTube, choose Public, and check normal signed-out playback before using its URL in the submission. Use the title and description in `submission-fields.json`. The narration and actual screen evidence must be evaluated together; a generated voice is not a human recording.
