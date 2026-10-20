@@ -1,0 +1,153 @@
+image: python:3.12-slim
+
+stages:
+  - plan
+  - create
+  - verify
+  - package
+  - secure
+  - release
+  - configure
+  - monitor
+  - govern
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PYTHONDONTWRITEBYTECODE: "1"
+  GIT_DEPTH: "0"
+
+cache:
+  key:
+    files: [requirements.txt]
+  paths: [.cache/pip/]
+
+default:
+  interruptible: true
+
+submission_plan:
+  stage: plan
+  script:
+    - python scripts/check_submission.py --output artifacts/submission-check.json
+  artifacts:
+    when: always
+    paths: [artifacts/submission-check.json]
+    expire_in: 90 days
+
+compile_source:
+  stage: create
+  script:
+    - python -m compileall -q server scripts examples/checkout
+
+application_tests:
+  stage: verify
+  before_script:
+    - python -m pip install --disable-pip-version-check -r requirements.txt
+  script:
+    # The intentionally red checkout contract is tested by fault/repair jobs below.
+    - python -m pytest tests -q --junitxml=artifacts/tests.xml
+  artifacts:
+    when: always
+    reports:
+      junit: artifacts/tests.xml
+    paths: [artifacts/tests.xml]
+    expire_in: 90 days
+
+frontend_build:
+  stage: verify
+  image: node:22-bookworm-slim
+  cache:
+    key:
+      files: [web/package-lock.json]
+    paths: [web/.npm/]
+  script:
+    - cd web
+    - npm ci --cache .npm --prefer-offline
+    - npm run build
+  artifacts:
+    paths: [web/dist/]
+    expire_in: 90 days
+
+package_source:
+  stage: package
+  script:
+    - python scripts/incident.py package --output artifacts/package
+  artifacts:
+    paths: [artifacts/package/]
+    expire_in: 90 days
+
+ast_security_gate:
+  stage: secure
+  script:
+    - python scripts/incident.py secure --output artifacts/security
+  artifacts:
+    when: always
+    paths: [artifacts/security/]
+    expire_in: 90 days
+
+dependency_advisory_gate:
+  stage: secure
+  before_script:
+    - python -m pip install --disable-pip-version-check pip-audit==2.10.1
+  script:
+    - mkdir -p artifacts/security
+    - pip-audit -r requirements.txt --format json --output artifacts/security/dependency-audit.json
+  artifacts:
+    when: always
+    paths: [artifacts/security/dependency-audit.json]
+    expire_in: 90 days
+
+sandbox_release_and_recovery:
+  stage: release
+  script:
+    # Executes the same controller as the application, real tests and loopback HTTP.
+    - python scripts/incident.py evidence --output artifacts/reference
+  artifacts:
+    when: always
+    paths: [artifacts/reference/]
+    expire_in: 90 days
+
+runtime_policy_contract:
+  stage: configure
+  script:
+    - python -c "from server.engine import POLICY; import json; assert POLICY['externalPayments'] is False; assert POLICY['failClosed'] is True; assert POLICY['maxAttempts'] <= 2; print(json.dumps(POLICY, indent=2))"
+
+expected_fault_demonstration:
+  stage: monitor
+  rules:
+    - if: '$CI_COMMIT_REF_NAME =~ /^aftercare\/repair-/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^aftercare\/repair-/'
+      when: never
+    - when: on_success
+  script:
+    # Reproduce exits zero ONLY when tests actually fail AND duplicate harm exists.
+    - python scripts/incident.py reproduce --output artifacts/seeded-fault
+    - python scripts/incident.py validate --output artifacts/seeded-fault
+  artifacts:
+    when: always
+    paths: [artifacts/seeded-fault/]
+    expire_in: 90 days
+
+ai_repair_contract:
+  stage: monitor
+  rules:
+    - if: '$CI_COMMIT_REF_NAME =~ /^aftercare\/repair-/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^aftercare\/repair-/'
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+  script:
+    - 'BASE_SHA="${CI_MERGE_REQUEST_DIFF_BASE_SHA:-$(git merge-base HEAD "origin/$CI_DEFAULT_BRANCH")}"'
+    - python scripts/incident.py policy --base "$BASE_SHA"
+    - python scripts/incident.py verify --output artifacts/ai-repair
+    - python scripts/incident.py validate --output artifacts/ai-repair
+  artifacts:
+    when: always
+    paths: [artifacts/ai-repair/]
+    expire_in: 90 days
+
+seal_submission_evidence:
+  stage: govern
+  script:
+    - python scripts/check_submission.py --output artifacts/final-check.json
+    - python -c "import hashlib,json,pathlib; root=pathlib.Path('artifacts'); files={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.rglob('*')) if p.is_file()}; (root/'artifact-digests.json').write_text(json.dumps(files,indent=2)+'\n')"
+  artifacts:
+    when: always
+    paths: [artifacts/]
+    expire_in: 90 days

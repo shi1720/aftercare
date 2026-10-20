@@ -1,0 +1,15 @@
+.gcloudignore
+.git
+.gitignore
+.venv
+**/__pycache__
+**/node_modules
+.pytest_cache
+.data
+var
+data
+artifacts
+.env
+.env.*
+web/dist
+.openai

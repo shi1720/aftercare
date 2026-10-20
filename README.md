@@ -1,93 +1,121 @@
 # Aftercare
 
+**Your health check is green. Your customer was charged twice.**
 
+Aftercare closes the gap between a healthy deployment and a correct customer outcome. It detects a broken customer promise, restores a safe revision, reconciles damage in a synthetic ledger, tests a bounded repair, and preserves the evidence of recovery.
 
-## Getting started
+Built by **Shivam Gupta** for GitLab Transcend 2026. **Path A · Supervised GitLab repair workflow.** The public reference sandbox runs its bounded loop hands-off. This distinction is visible in the product.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- [Public GitLab project](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare)
+- [CI/CD history](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/pipelines)
+- [Duo sessions](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/automate/agent-sessions)
+- [MIT license](LICENSE) · [Security boundaries](SECURITY.md)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## The customer problem
 
-## Add your files
+A retry can create two charges while every request returns HTTP 200. A rollback prevents more duplicates but leaves existing duplicates in the ledger. Platform engineers then coordinate application repair, finance reconciliation, regression tests and incident evidence by hand.
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+Aftercare starts with one precise promise: **one tenant + one idempotency key + one amount produces one net debit**. It also tests tenant isolation and conflicting retries. Its intended buyer is an engineering team running transaction-heavy SaaS on GitLab. Commercial assumptions and competitive positioning are documented in [the product brief](docs/product-brief.md).
 
+## Try it
+
+Open the deployed URL in [deployment evidence](docs/deployment.md), then choose **Open sandbox**. No API key or payment account is needed. You may also register an account to retain your own history. The demo processes synthetic credits only.
+
+1. Run **Duplicate charge**. Watch actual subprocess tests reproduce the fault while a real loopback HTTP health probe returns 200.
+2. Inspect the safe revision switch and append-only reversal entries. Replaying reconciliation must add no further reversal.
+3. Watch the repaired source pass contract tests and 32 synthetic HTTP requests before promotion. Open the source diff and download the evidence and ledger.
+4. Run **Unsafe repair**. The AST policy blocks the candidate before execution and verifies that the safe revision remains active.
+
+**Two execution modes, clearly separated:**
+
+| Mode | What actually executes | Authority |
+| --- | --- | --- |
+| Public reference sandbox | Reviewed deterministic templates, real Python subprocess tests, loopback HTTP traffic, synthetic ledger reconciliation, artifact sealing, pointer promotion and postcheck | Hands-off inside an isolated fixture only. Zero model calls. |
+| GitLab Duo flow | AI triage of a checked-in fault, source repair, added regression test, verification and repair MR using GitLab tools | Supervised. Final MR stays open for review. No live processor or automatic real deployment. |
+
+The interface does not impersonate a GitLab session. A repository YAML file alone does not mean a flow ran. Actual external execution evidence belongs in [the evidence status](docs/evidence-status.md).
+
+## Run locally
+
+Requires Python 3.12+, Node 22+, and npm. No model API keys are needed for the reference sandbox.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cd web
+npm ci
+npm run build
+cd ..
+DATA_DIR=./var APP_ORIGIN=http://localhost:8080 uvicorn server.main:app --host 127.0.0.1 --port 8080
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare.git
-git branch -M main
-git push -uf origin main
+
+Open http://localhost:8080. The production server serves both the built UI and `/api/` routes. Local users, sessions and runs persist in `var/aftercare.sqlite3`. Do not commit that directory. For frontend development, run `npm run dev` inside `web/`; Vite proxies API requests to port 8080.
+
+```bash
+python -m pytest tests -q
+python scripts/check_submission.py
+python scripts/incident.py evidence --output artifacts/reference
+python scripts/incident.py reproduce --output artifacts/seeded-fault
+python scripts/incident.py verify --output artifacts/repair
 ```
 
-## Integrate with your tools
+The last command **must fail on the default branch** because `examples/checkout/service.py` deliberately contains the incident. `reproduce` exits zero only when the bug is actually reproduced. `verify` must pass on an AI repair branch after the source fix and added regression test. This prevents a polished dashboard from hiding a non-working repair.
 
-* [Set up project integrations](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43209963/aftercare/-/settings/integrations)
+## GitLab Duo Agent Platform setup
 
-## Collaborate with your team
+The project must have Duo access and a supported runner. Read [GitLab's custom flow documentation](https://docs.gitlab.com/user/duo_agent_platform/flows/custom/). The `.gitlab/duo/agent-config.yml` uses the managed execution environment and installs pinned Python dependencies. Configuration is read from the default branch.
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+1. In the project, go to **AI > Flows > New flow**.
+2. Name it **Aftercare** and paste `gitlab/flows/aftercare.yml`. The flow uses two `AgentComponent`s: incident triage and source repair. It explicitly passes the trigger context and project ID.
+3. Create and enable it for this project, then add a **mention** or **assignment** trigger. Use the service-account handle GitLab actually displays.
+4. Create an incident issue describing duplicate charges on repeated checkout, and invoke the flow. Do not include secrets or customer records.
+5. Inspect the real session, resulting repair MR and branch pipeline. The repair branch is `aftercare/repair-*`. CI enforces a path allowlist, an added regression test and unchanged verifier/policy.
 
-## Test and Deploy
+Prompt instructions are supported by executable gates. They are not a substitute for GitLab permissions. Custom CI variables are not automatically available to Duo execution. Do not put cloud or payment secrets in the flow YAML.
 
-Use the built-in continuous integration in GitLab.
+## Lifecycle coverage
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+| Stage | Concrete operation and evidence |
+| --- | --- |
+| Plan | Reproduce incident, identify failing invariant, record customer-impact scope and permitted recovery intent |
+| Create | Duo writes a source repair and regression test; reference mode selects a reviewed template and says so |
+| Verify | Execute business and adversarial contracts against the candidate in a separate Python process |
+| Package | Build the tested fixture into a digest-bound release archive with a scoped CycloneDX manifest |
+| Secure | Restrict AST capabilities before execution; enforce repair changed-path policy; audit Python dependencies in CI |
+| Release | Replay real loopback HTTP canary requests, verify bundle/source identity, promote only a verified sandbox revision |
+| Configure | Apply bounded runtime configuration and record the active revision pointer |
+| Monitor | Independently retest the promoted revision; distinguish HTTP health from customer promises |
+| Govern | Record the decision, compensation ledger, source/artifact hashes and a verifiable event hash chain |
 
-***
+CI has jobs for these operations, frontend build, application tests and evidence retention. Stage labels alone are not presented as proof of coverage.
 
-# Editing this README
+## Architecture and persistence
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+React + TypeScript + Vite UI; FastAPI API; bounded Python reference controller; SQLite for local use; a dedicated named Firestore database in cloud mode. All run reads and downloads check the session owner. The UI polls real backend state and starts without fabricated history.
 
-## Suggestions for a good README
+The candidate sources are fixed first-party fixtures, not arbitrary visitor-supplied code. The API accepts a scenario enum, not shell commands or URLs. See [SECURITY.md](SECURITY.md) for the exact boundary and outstanding production work.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Cloud mode stores users, hashed sessions, run evidence and bounded artifacts in Firestore. Use one Cloud Run instance and one worker because execution locks are process-local. A stale interrupted workflow fails closed. This release does not provide a distributed durable workflow engine or real payment compensation adapter.
 
-## Name
-Choose a self-explaining name for your project.
+## Google Cloud deployment
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+The included multistage Dockerfile builds the UI and runs the backend as a non-root user. Deployment scripts create a dedicated identity and database, scope database access with an IAM condition, and configure scale-to-zero with one maximum instance.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```bash
+export GOOGLE_CLOUD_PROJECT=your-billing-enabled-project
+./deploy/setup-google-cloud.sh
+./deploy/google-cloud.sh
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Google Cloud must have billing enabled. Cloud Run and the named Firestore database can incur charges, even though local use needs no paid service. No model or processor credential is included. See [deployment evidence and operating limits](docs/deployment.md).
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Evidence and claims
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Evidence is a SHA-256 chain, **not a cryptographic signature**. It detects changes relative to a trusted chain head. Do not treat it as a compliance certification. Ledger amounts are synthetic test credits. Duration and test/request counts are measured. No customer, revenue, avoided-loss or carbon reduction is invented.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+The commercial model is a hypothesis to validate: open-source contracts and controller, paid managed evidence retention and team governance. Existing rollout and synthetic-monitoring products already address adjacent problems. Aftercare's proposed wedge is closing already-created business harm and linking the proof to a GitLab repair.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Author and license
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Created and directed by **Shivam Gupta**, with AI-assisted engineering and review. [MIT](LICENSE). Commit sign-offs follow the [Developer Certificate of Origin 1.1](https://developercertificate.org/). No prior project was imported into Path A.

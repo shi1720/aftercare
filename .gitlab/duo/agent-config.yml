@@ -1,0 +1,11 @@
+# The default GitLab image includes Python 3.12 and SRT network protection.
+# This configuration is read from the default branch, not the repair branch.
+setup_script:
+  - python3 --version
+  - git --version
+network_policy:
+  include_recommended_allowed: true
+cache:
+  key: aftercare-python-stdlib-v1
+  paths:
+    - .cache/aftercare/
