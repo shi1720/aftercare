@@ -41,6 +41,7 @@ compile_source:
 application_tests:
   stage: verify
   before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
     - python -m pip install --disable-pip-version-check -r requirements.txt
   script:
     # The intentionally red checkout contract is tested by fault/repair jobs below.

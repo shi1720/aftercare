@@ -1,0 +1,31 @@
+{
+  "baseUrl": "https://aftercare-359201230061.us-central1.run.app",
+  "runId": "8b6bb7a3-c95b-4b08-bd07-9a27f6bae4a1",
+  "status": "recovered",
+  "metrics": {
+    "durationMs": 13494,
+    "testsPassed": 7,
+    "testsTotal": 7,
+    "requestsReplayed": 84,
+    "duplicateCharges": 23,
+    "modelCalls": 0,
+    "artifactsReused": 0,
+    "totalRequests": 162,
+    "healthProbes": 14,
+    "canaryRequests": 32,
+    "stabilityRequests": 20
+  },
+  "guestIsolation": true,
+  "artifactDigests": true,
+  "registrationLoginLogout": true,
+  "health": "healthy",
+  "evidenceKeys": [
+    "author",
+    "executionMode",
+    "format",
+    "integrity",
+    "project",
+    "run",
+    "sandbox"
+  ]
+}

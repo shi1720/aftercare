@@ -21,6 +21,7 @@ from pydantic import BaseModel, Field, field_validator
 from .engine import Controller, POLICY, SCENARIOS, new_run
 from .evidence import canonical, verify_chain
 from .store import Store
+from .gitlab_evidence import GitLabEvidence
 
 COOKIE = "aftercare_session"
 SESSION_SECONDS = 60 * 60 * 24 * 7
@@ -99,6 +100,7 @@ def create_app(data_dir=None, frontend_dir=None):
     app = FastAPI(title="Aftercare", version="1.0.0", lifespan=lifespan, docs_url="/api/docs", openapi_url="/api/openapi.json", redoc_url=None)
     app.state.store, app.state.controller, app.state.tasks = store, controller, set()
     app.state.execution_slots = threading.BoundedSemaphore(4)
+    app.state.gitlab_evidence = GitLabEvidence()
 
     @app.exception_handler(sqlite3.OperationalError)
     async def sqlite_unavailable(request, exc):
@@ -240,6 +242,11 @@ def create_app(data_dir=None, frontend_dir=None):
                     {"id": "input-validation", "name": "Conflicting retries fail closed", "description": "Changing an amount under the same key cannot produce another debit.", "status": "enforced", "source": "server/sandbox.py:Contracts.test_idempotency_conflict_fails_closed", "category": "input-validation"}],
                 "metrics": {"totalRuns": len(runs), "recovered": sum(r["status"] == "recovered" for r in runs), "blocked": sum(r["status"] == "blocked" for r in runs), "protectedRequests": sum(r["metrics"]["requestsReplayed"] for r in runs if r["status"] == "recovered")},
                 "integration": {"mode": "reference", "gitlabConfigured": False, "detail": "Local deterministic reference controller. Import the Duo flow into GitLab to run AI diagnosis and repair."}, "policy": POLICY}
+
+    @app.get("/api/gitlab/evidence")
+    def gitlab_evidence(request: Request):
+        current_user(request)
+        return app.state.gitlab_evidence.get()
 
     @app.post("/api/runs", status_code=202)
     async def start_run(body: RunInput, request: Request):
